@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "cypress:open": "cypress open"
-},
+    "cypress:open": "cypress open"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^14.5.3"
+    "cypress": "^14.5.4"
   }
 }
