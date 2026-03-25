@@ -11,7 +11,7 @@ describe('Entrar na página de login', () => {
     cy.visit('https://acessohom.institutoayrtonsenna.org.br/auth/realms/ias/protocol/openid-connect/auth?client_id=bncc&redirect_uri=https%3A%2F%2Fdevplataformafarol.institutoayrtonsenna.org.br%2Fdashboard&state=58b3e694-e4f7-4a54-8328-188821d3da5a&response_mode=fragment&response_type=code&scope=openid&nonce=fba3c315-f065-42b1-b9b2-89ffa57464cf');
   });
        
-//CENARIO 1 cadastro estudante unico
+//1 cadastro estudante unico
 
 it('cadastra estudante único', () => {
 
@@ -36,37 +36,40 @@ it('cadastra estudante único', () => {
     // Login
   cy.get('input[id="user-input"]')
     .should('be.visible')
-  cy.get('input[id="user-input"]')
     .click()
     .type('60448288915@gmail.com')
-    .click()
-    .type('60448288915@gmail.com')
-    .should('be.visible')
+    .should('have.value', '60448288915@gmail.com');
   cy.get('#password-input')
+    .should('be.visible')
     .click()
     .type('123456')
-    .click()
-  cy.get('.bt-entrar')
-    .should('be.visible')
+    .should('have.value', '123456');
   cy.get('.bt-entrar')
     .should('be.visible')
     .click();
-   // Fluxo na origem diferente
-  cy.origin('https://devplataformafarol.institutoayrtonsenna.org.br',
-    { args: { nomeEstudante, dataNascimento } },
-    ({ nomeEstudante, dataNascimento     }) => {
+ // Fluxo na origem diferente
+  cy.origin(
+    'https://devplataformafarol.institutoayrtonsenna.org.br',
+    { args: { nomeEstudante, dataNascimento} },
+    ({ nomeEstudante, dataNascimento }) => {
   cy.get('.MuiTypography-root.jss18.MuiTypography-body1')
     .should('be.visible')
-    .wait(2000)
-    .click();    
+    .wait(2000);
+  cy.get('[style="display: flex; flex-direction: row; justify-content: space-evenly; gap: 4px;"] > :nth-child(2) > .MuiTypography-root')
+    .wait(1000)
+    .click();
   cy.contains(':nth-child(6) > .MuiButtonBase-root > .MuiTypography-root', 'Estudantes')
     .should('be.visible')
     .trigger('mouseover')
+    .trigger('mouseup');
   cy.contains('li.MuiButtonBase-root', 'Cadastro único')
     .trigger('mouseover')
     .trigger('mouseup')
+    .trigger("click");
   cy.get('input[placeholder="Selecione uma regional"]')
+    .click();
   cy.get('[role="combobox"] div')
+    .wait(1000);
   cy.get('#regional-option-0')
     .first()
     .click();
@@ -113,10 +116,10 @@ it('cadastra estudante único', () => {
   cy.get('td[class="MuiTableCell-root MuiTableCell-body MuiTableCell-alignCenter MuiTableCell-sizeMedium css-1rm6ur4"]')
     .contains(nomeEstudante)
     .should('be.visible');
- });
-  }); 
+     });
+      }); 
    
-//CENARIO 1.1 cadastro estudante unico exceção - número presente no nome
+//1.1 cadastro estudante unico exceção - número presente no nome
 
 it('cadastro estudante único com erro no nome contendo numeral', () => {
 
@@ -141,18 +144,16 @@ it('cadastro estudante único com erro no nome contendo numeral', () => {
     cy.wrap(nomeEstudante).as('nomeEstudante');
    
     // Login
-   cy.get('input[id="user-input"]')
-    .should('be.visible')
   cy.get('input[id="user-input"]')
-    .click()
-    .type('60448288915@gmail.com')
-    .click()
-    .type('60448288915@gmail.com')
     .should('be.visible')
+    .click()
+    .type('60448288915@gmail.com')
+    .should('have.value', '60448288915@gmail.com');
   cy.get('#password-input')
+    .should('be.visible')
     .click()
     .type('123456')
-    .click()
+    .should('have.value', '123456');
   cy.get('.bt-entrar')
     .should('be.visible')
   cy.get('.bt-entrar')
@@ -189,25 +190,39 @@ it('cadastro estudante único com erro no nome contendo numeral', () => {
   cy.contains('50001078 - EM TEODORO RONDON')
     .click();
   cy.get('#classRooms')
+    .click();
+  cy.get('#classRooms-option-0')
+    .click();
   cy.get('input[placeholder="Selecione a situação do ano anterior"]')
+    .click();
   cy.contains('Aprovado')
+    .click();
   cy.get('input[placeholder="Selecione o ano/série de origem"]')
     .click();
   cy.contains('9º - Ano (Ensino Fundamental)')
     .click()
   cy.get('input[placeholder="Nome completo do estudante"]')
     .click()
-  cy.get('#gender')
+    .type(nomeEstudante)
+    .should('be.visible'); 
+  cy.get('input[placeholder="DD/MM/AAAA"]')
+    .click()
+    .type(dataNascimento)
     .should('be.visible');
+  cy.get('#gender')
+    .click();
   cy.contains('Feminino')
+    .click();
   cy.get('.MuiGrid-root > .MuiButton-contained')
     .should('be.visible')
     .click()
-   
+  cy.get('#name-helper-text')
+    .contains('Nome do estudante inválido. O nome deve conter apenas letras e não pode conter números, ou caracteres especiais, como espaço, @, _, ou -.')
+    .should('be.visible')
  });
   });   
 
-//CENARIO 1.2 cadastro estudante unico exceção - data de nascimento inválida, dia atual
+//1.2 cadastro estudante unico exceção - data de nascimento inválida, dia atual
 
 it('cadastra estudante único com erro na data nasc. dia atual', () => {
 // Funções utilitárias
@@ -234,79 +249,84 @@ function gerarDataNascimento() {
  
   // Login
 cy.get('input[id="user-input"]')
-  .should('be.visible')
-  .click()
-  .type('60448288915@gmail.com')
-  .should('have.value', '60448288915@gmail.com');
-cy.get('#password-input')
-  .should('be.visible')
-  .click()
-  .type('123456')
-  .should('have.value', '123456');
-cy.get('.bt-entrar')
-  .should('be.visible')
-  .click();
- // Fluxo na origem diferente
-cy.origin(
-  'https://devplataformafarol.institutoayrtonsenna.org.br',
-  { args: { nomeEstudante, dataNascimento} },
-  ({ nomeEstudante, dataNascimento }) => {
-cy.get('.MuiTypography-root.jss18.MuiTypography-body1')
-  .should('be.visible')
-  .wait(2000);
-cy.get('[style="display: flex; flex-direction: row; justify-content: space-evenly; gap: 4px;"] > :nth-child(2) > .MuiTypography-root')
-  .wait(1000)
-  .click();
-cy.contains(':nth-child(6) > .MuiButtonBase-root > .MuiTypography-root', 'Estudantes')
-  .should('be.visible')
-  .trigger('mouseover')
-  .trigger('mouseup');
-cy.contains('li.MuiButtonBase-root', 'Cadastro único')
-  .trigger('mouseover')
-  .trigger('mouseup')
-  .trigger("click");
-cy.get('input[placeholder="Selecione uma regional"]')
-  .click();
-cy.get('[role="combobox"] div')
-  .wait(1000);
-cy.get('#regional-option-0')
-  .first()
-  .click();
-cy.get('input[placeholder="Selecione uma ou mais escolas"]')
-  .click();
-cy.contains('50001078 - EM TEODORO RONDON')
-  .click();
-cy.get('#classRooms')
-  .click();
-cy.get('#classRooms-option-0')
-  .click();
-cy.get('input[placeholder="Selecione a situação do ano anterior"]')
-  .click();
-cy.contains('Aprovado')
-  .click();
-cy.get('input[placeholder="Selecione o ano/série de origem"]')
-  .click();
-cy.contains('3º - Ano (Ensino Fundamental)')
-  .click();
-cy.get('input[placeholder="Nome completo do estudante"]')
-  .click()
-  .type(nomeEstudante)
-  .should('be.visible'); 
-cy.get('input[placeholder="DD/MM/AAAA"]')
-  .click()
-  .type(dataNascimento)
-  .should('be.visible');
-cy.get('#gender')
-  .click();
-cy.contains('Feminino')
-  .click();
-cy.get('.MuiGrid-root > .MuiButton-contained')
-  .should('be.visible')
-  .click()
+    .should('be.visible')
+    .click()
+    .type('60448288915@gmail.com')
+    .should('have.value', '60448288915@gmail.com');
+  cy.get('#password-input')
+    .should('be.visible')
+    .click()
+    .type('123456')
+    .should('have.value', '123456');
+  cy.get('.bt-entrar')
+    .should('be.visible')
+  cy.get('.bt-entrar')
+    .should('be.visible')
+    .click();
+   // Fluxo na origem diferente
+  cy.origin(
+    'https://devplataformafarol.institutoayrtonsenna.org.br',
+    { args: { nomeEstudante, dataNascimento} },
+    ({ nomeEstudante, dataNascimento     }) => {
+  cy.get('.MuiTypography-root.jss18.MuiTypography-body1')
+    .should('be.visible')
+    .wait(2000);
+  cy.get('[style="display: flex; flex-direction: row; justify-content: space-evenly; gap: 4px;"] > :nth-child(2) > .MuiTypography-root')
+    .wait(1000)
+    .click();
+  cy.contains(':nth-child(6) > .MuiButtonBase-root > .MuiTypography-root', 'Estudantes')
+    .should('be.visible')
+    .trigger('mouseover')
+    .trigger('mouseup');
+  cy.contains('li.MuiButtonBase-root', 'Cadastro único')
+    .trigger('mouseover')
+    .trigger('mouseup')
+    .trigger("click");
+  cy.get('input[placeholder="Selecione uma regional"]')
+    .click();
+  cy.get('[role="combobox"] div')
+    .wait(1000);
+  cy.get('#regional-option-0')
+    .first()
+    .click();
+  cy.get('input[placeholder="Selecione uma ou mais escolas"]')
+    .click();
+  cy.contains('50001078 - EM TEODORO RONDON')
+    .click();
+  cy.get('#classRooms')
+    .click();
+  cy.get('#classRooms-option-0')
+    .click();
+  cy.get('input[placeholder="Selecione a situação do ano anterior"]')
+    .click();
+  cy.contains('Aprovado')
+    .click();
+  cy.get('input[placeholder="Selecione o ano/série de origem"]')
+    .click();
+  cy.contains('3º - Ano (Ensino Fundamental)')
+    .click()
+  cy.get('input[placeholder="Nome completo do estudante"]')
+    .click()
+    .type(nomeEstudante)
+    .should('be.visible'); 
+  cy.get('input[placeholder="DD/MM/AAAA"]')
+    .click()
+    .type(dataNascimento)
+    .should('be.visible');
+  cy.get('#gender')
+    .click();
+  cy.contains('Feminino')
+    .click();
+  cy.get('.MuiGrid-root > .MuiButton-contained')
+    .should('be.visible')
+    .click()
+  cy.get('#name-helper-text')
+    .contains('Nome do estudante inválido. O nome deve conter apenas letras e não pode conter números, ou caracteres especiais, como espaço, @, _, ou -.')
+    .should('be.visible') //esta com erro, mudar a mensagem depois da correção
    }); 
     }); 
 
-//CENARIO 1.3 cadastro estudante unico ano/série divergente
+//1.3 cadastro estudante unico ano/série divergente
 
 it('cadastro estudante unico exceção - ano/série divergente ', () => {
 
@@ -341,12 +361,14 @@ it('cadastro estudante unico exceção - ano/série divergente ', () => {
     .should('have.value', '123456');
   cy.get('.bt-entrar')
     .should('be.visible')
+  cy.get('.bt-entrar')
+    .should('be.visible')
     .click();
    // Fluxo na origem diferente
   cy.origin(
     'https://devplataformafarol.institutoayrtonsenna.org.br',
-    { args: { nomeEstudante, dataNascimento } },
-    ({ nomeEstudante, dataNascimento }) => {
+    { args: { nomeEstudante, dataNascimento} },
+    ({ nomeEstudante, dataNascimento     }) => {
   cy.get('.MuiTypography-root.jss18.MuiTypography-body1')
     .should('be.visible')
     .wait(2000);
@@ -372,7 +394,6 @@ it('cadastro estudante unico exceção - ano/série divergente ', () => {
     .click();
   cy.contains('50001078 - EM TEODORO RONDON')
     .click();
-  cy.get('input[placeholder="Selecione uma ou mais turmas"]')
   cy.get('#classRooms')
     .click();
   cy.get('#classRooms-option-0')
@@ -384,7 +405,7 @@ it('cadastro estudante unico exceção - ano/série divergente ', () => {
   cy.get('input[placeholder="Selecione o ano/série de origem"]')
     .click();
   cy.contains('9º - Ano (Ensino Fundamental)')
-    .click();
+    .click()
   cy.get('input[placeholder="Nome completo do estudante"]')
     .click()
     .type(nomeEstudante)
@@ -396,30 +417,56 @@ it('cadastro estudante unico exceção - ano/série divergente ', () => {
   cy.get('#gender')
     .click();
   cy.contains('Feminino')
-  cy.get('div[class="MuiSnackbarContent-message"]')
+    .click();
+  cy.get('.MuiGrid-root > .MuiButton-contained')
     .should('be.visible')
+    .click()
+  cy.get('.MuiSnackbarContent-message')
+    .contains('Ano/Série inválido. Verifique se o Ano/série inserido corresponde à turma do estudante.')
+    .should('be.visible') 
+     }); 
+       }); 
 
- }); 
- }); 
-
-//CENARIO 1.4 cadastro estudante unico exceção campos obrigatorios
+//1.4 cadastro estudante unico exceção campos obrigatorios
 it('cadastro estudante unico exceção campos obrigatorios ', () => {
+
+  // Funções utilitárias
+  function gerarNomeComposto() {
+    const nomes = ['Ana', 'Bruno', 'Carlos', 'Daniela', 'Eduardo', 'Fernanda'];
+    const sobrenomes = ['Silva', 'Souza', 'Pereira', 'Costa', 'Oliveira', 'Santos'];
+    const nome = nomes[Math.floor(Math.random() * nomes.length)];
+    const sobrenome = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
+    return `${nome} ${sobrenome}`;  
+  }
+  function gerarDataNascimento() {
+    const dia = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0');
+    const mes = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+    const ano = Math.floor(Math.random() * (2008 - 1995 + 1) + 1995);
+    return `${dia}/${mes}/${ano}`;
+  }
+    const nomeEstudante = gerarNomeComposto();
+    const dataNascimento = gerarDataNascimento();
+    cy.wrap(nomeEstudante).as('nomeEstudante');
+
   cy.get('input[id="user-input"]')
     .should('be.visible')
-  cy.get('input[id="user-input"]')
     .click()
     .type('60448288915@gmail.com')
-    .should('have.value', '60448288915@gmail.com')
+    .should('have.value', '60448288915@gmail.com');
+  cy.get('#password-input')
     .should('be.visible')
     .click()
     .type('123456')
+    .should('have.value', '123456');
+  cy.get('.bt-entrar')
+    .should('be.visible')
   cy.get('.bt-entrar')
     .should('be.visible')
     .click();
    // Fluxo na origem diferente
-  cy.origin(
-    'https://devplataformafarol.institutoayrtonsenna.org.br',)
-  
+  cy.origin('https://devplataformafarol.institutoayrtonsenna.org.br', () => {
+    //{ args: { nomeEstudante, dataNascimento} }
+    //({ nomeEstudante, dataNascimento     }) => {
   cy.get('.MuiTypography-root.jss18.MuiTypography-body1')
     .should('be.visible')
     .wait(2000);
@@ -433,7 +480,9 @@ it('cadastro estudante unico exceção campos obrigatorios ', () => {
   cy.contains('li.MuiButtonBase-root', 'Cadastro único')
     .trigger('mouseover')
     .trigger('mouseup')
-    .trigger("click")
+    .trigger("click");
+  cy.get('.MuiGrid-root > .MuiButton-contained')
+    .should('be.visible')
     .click()
   cy.get('#regional-helper-text')
     .contains('Selecione uma regional')
@@ -451,18 +500,22 @@ it('cadastro estudante unico exceção campos obrigatorios ', () => {
     .contains('Campo obrigatório não preenchido. Preencha a data para continuar.')
     .should('be.visible');
     });
+     });
     
-   //CENARIO 2 cadastra regional
+   //2 cadastra regional
 it('cadastra regional', () => { 
-  cy.get('input[id="user-input"]')
+ cy.get('input[id="user-input"]')
     .should('be.visible')
-  cy.get('input[id="user-input"]')
     .click()
     .type('60448288915@gmail.com')
-    .should('have.value', '60448288915@gmail.com')
+    .should('have.value', '60448288915@gmail.com');
+  cy.get('#password-input')
     .should('be.visible')
     .click()
     .type('123456')
+    .should('have.value', '123456');
+  cy.get('.bt-entrar')
+    .should('be.visible')
   cy.get('.bt-entrar')
     .should('be.visible')
     .click();
@@ -517,7 +570,7 @@ it('cadastra regional', () => {
     });
      });
    
-    //CENARIO 2.1 editar regional
+    //2.1 editar regional
 
 it('edita regional', () => { 
   cy.get('input[id="user-input"]')
@@ -587,7 +640,7 @@ it('edita regional', () => {
  }); 
      });
 
-   // CENARIO 3 cadastra coordenador
+    //3 cadastra coordenador
 
 it('cadastra coordenador', () => {  
   // Funções utilitárias
@@ -605,23 +658,23 @@ it('cadastra coordenador', () => {
     .toLowerCase()
     .replace(/\s+/g, '');
   }
-    const nomeCoordenador = gerarNomeCoordenador();
-  cy.wrap(nomeCoordenador).as('nomeCoordenador');
-  cy.get('input[id="user-input"]')
-    .should('be.visible')
+     const nomeCoordenador = gerarNomeCoordenador();
+   cy.wrap(nomeCoordenador).as('nomeCoordenador');
+     const email = gerarEmailCoordenador();
+   cy.wrap(email).as('email');
+
   cy.get('input[id="user-input"]')
     .click()
     .type('60448288915@gmail.com')
-    .should('have.value', '60448288915@gmail.com')
-  cy.get('#password-input') 
-    .should('be.visible')
+    .should('have.value', '60448288915@gmail.com');
   cy.get('#password-input')
+    .should('be.visible')
     .click()
     .type('123456')
-    .should('have.value', '123456')
+    .should('have.value', '123456');
   cy.get('.bt-entrar')
     .should('be.visible')
-    .click()
+    .click();
   cy.origin('https://devplataformafarol.institutoayrtonsenna.org.br',
      { args: { nomeCoordenador, email } },
     ({ nomeCoordenador, email }) => {
@@ -669,10 +722,10 @@ it('cadastra coordenador', () => {
     .click() 
   cy.get(':nth-child(1) > .MuiPaper-root > .MuiCardContent-root > .MuiGrid-spacing-xs-2 > :nth-child(1) > .MuiGrid-root > :nth-child(1) > .MuiBox-root')
     .should('contain', (email));
-  });
-   });   
+      });
+       });   
 
-   // CENARIO 3.1 cadastra coordenador unico campos obrigatorios
+    //3.1 cadastra coordenador unico campos obrigatorios
 
 it('cadastra coordenador exceção campos obrigatorios', () => {  
   // Funções utilitárias
@@ -695,16 +748,18 @@ it('cadastra coordenador exceção campos obrigatorios', () => {
     const email = gerarEmailCoordenador();
   cy.wrap(email).as('email');
 
-  cy.get('input[id="user-input"]')
-    .should('have.value', '60448288915@gmail.com')
-  cy.get('#password-input') 
-    .should('be.visible')
+ cy.get('input[id="user-input"]')
+    .click()
+    .type('60448288915@gmail.com')
+    .should('have.value', '60448288915@gmail.com');
   cy.get('#password-input')
-    .click()
-  cy.get('.bt-entrar')
- 
     .should('be.visible')
     .click()
+    .type('123456')
+    .should('have.value', '123456');
+  cy.get('.bt-entrar')
+    .should('be.visible')
+    .click();
   cy.origin('https://devplataformafarol.institutoayrtonsenna.org.br',
      { args: { nomeCoordenador, email } },
     ({ nomeCoordenador, email }) => {
@@ -1011,30 +1066,33 @@ cy.wrap(nomeProfessor).as('nomeProfessor');
 
   cy.wrap(email).as('email');
   cy.get('input[id="user-input"]')
-    .should('be.visible')
-  cy.get('input[id="user-input"]')
-    .click()
-    .type('60448288915@gmail.com')
-    .should('have.value', '60448288915@gmail.com')
-  cy.get('#password-input') 
-    .should('be.visible')
-  cy.get('#password-input')
-    .click()
-    .type('123456')
-    .should('have.value', '123456')
-  cy.get('.bt-entrar')
-    .should('be.visible')
-    .click()
-  cy.origin('https://devplataformafarol.institutoayrtonsenna.org.br',
-    { args: { nomeProfessor, email } },
-     ({ nomeProfessor, email }) => {
-  cy.get('[style="display: flex; flex-direction: row; justify-content: space-evenly; gap: 4px;"] > :nth-child(2) > .MuiTypography-root').wait(1000)
-    .click();
-  cy.get(':nth-child(4) > .MuiButtonBase-root > .MuiTypography-root')
-    .should('have.text', 'Professores')
-    .trigger('mouseover')
-    .trigger('mouseup')
-    .trigger("click");
+  .should('be.visible')
+cy.get('input[id="user-input"]')
+  .click()
+  .type('60448288915@gmail.com')
+  .should('have.value', '60448288915@gmail.com')
+cy.get('#password-input') 
+  .should('be.visible')
+cy.get('#password-input')
+  .click()
+  .type('123456')
+  .should('have.value', '123456')
+cy.get('.bt-entrar')
+  .should('be.visible')
+  .click()
+cy.origin('https://devplataformafarol.institutoayrtonsenna.org.br',
+   { args: { nomeProfessor, email } },
+  ({ nomeProfessor, email }) => {
+cy.get('.MuiTypography-root.jss18.MuiTypography-body1')
+  .should('be.visible')
+  .wait(3000)
+cy.get('[style="display: flex; flex-direction: row; justify-content: space-evenly; gap: 4px;"] > :nth-child(2) > .MuiTypography-root').wait(1000)
+  .click();
+cy.get(':nth-child(4) > .MuiButtonBase-root > .MuiTypography-root')
+  .should('have.text', 'Professores')
+  .trigger('mouseover')
+  .trigger('mouseup')
+  .trigger("click");
   cy.get('.MuiButton-label > .MuiTypography-root')
     .should('have.text', 'Cadastrar Professor')
     .click()
@@ -1046,10 +1104,14 @@ cy.wrap(nomeProfessor).as('nomeProfessor');
   cy.get('#email-helper-text')
     .contains('É necessário informar um e-mail válido')
     .should('be.visible')
+  cy.get('P[class="MuiFormHelperText-root MuiFormHelperText-contained Mui-error"]')
     .contains('Informe a regional')
     .should('be.visible')
-    
-    }); });
+    cy.get('P[class="MuiFormHelperText-root MuiFormHelperText-contained Mui-error"]')
+    .contains('Informe a a escola') //bug para correção
+    .should('be.visible')
+      });
+       });
   
   
   //CENARIO 6 cadastra turma única
