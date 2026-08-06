@@ -759,8 +759,9 @@ describe('Entrar na página de login', () => {
         cy.contains('Atualizar').click();
         //cy.get('td[data-x="3"][data-y="0"]').click({ force: true });
         cy.get('td[data-x="3"][data-y="0"]').dblclick();
-        cy.get('.jexcel_dropdown').click();
-        cy.contains('Masculino').click();
+        cy.get('.jexcel_dropdown', 'Masculino').click();
+
+
         //cy.contains('jdropdown-description', 'Masculino').click
         // cy.get('body').click({ force: true })
         // //.select('Masculino')
