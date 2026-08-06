@@ -702,7 +702,7 @@ describe('Entrar na página de login', () => {
       'https://devplataformafarol.institutoayrtonsenna.org.br',
       { args: { nomeEstudante, dataNascimento } },
       ({ nomeEstudante, dataNascimento }) => {
-        cy.get('.MuiTypography-root.jss18.MuiTypography-body1')
+        cy.get('.MuiTypography-root.MuiTypography-body1')
           .should('be.visible')
           .wait(2000);
         cy.get('[style="display: flex; flex-direction: row; justify-content: space-evenly; gap: 4px;"] > :nth-child(2) > .MuiTypography-root')
@@ -716,64 +716,69 @@ describe('Entrar na página de login', () => {
           .trigger('mouseover')
           .trigger('mouseup')
           .trigger("click");
-        cy.get('.MuiButton-root > .MuiButton-label')
+        cy.get('span[class="MuiButton-label"]')
           .contains('Novo Cadastro')
           .click();
-        //cy.get(':nth-child(1) > .MuiAutocomplete-root > .MuiFormControl-root > .MuiInputBase-root')
-        //  .click();
-        //cy.get('ul[class="MuiAutocomplete-listbox"]')
-        //  .contains('Regional Farol 156A')
-        //  .click();
-        cy.get('input[placeholder="Selecione a regional"]')
+        cy.get(':nth-child(1) > .MuiAutocomplete-root > .MuiFormControl-root > .MuiInputBase-root')
           .click();
-        cy.contains('Regional Farol 156A')
+        cy.get('ul[class="MuiAutocomplete-listbox"]')
+          .contains('Regional Farol 156A')
           .click();
         cy.get(':nth-child(2) > .MuiAutocomplete-root > .MuiFormControl-root > .MuiInputBase-root')
           .click();
         cy.contains('COLEGIO CELQ')
           .click();
-        cy.get(' .MuiGrid-root > .MuiButtonBase-root > .MuiButton-label')
+        cy.get('span[class="MuiButton-label"]')
           .contains('INICIAR CADASTRO')
           .click();
-        cy.get('td[data-x="1"][data-y="0"]')
+        cy.get('td[data-x="1"][data-y="0"]').click({ force: true })
+          .type(nomeEstudante)
+        cy.get('td[data-x="2"][data-y="0"]').click({ force: true })
+          .type(dataNascimento)
+        cy.get('td[data-x="3"][data-y="0"]').click({ force: true })
+          .type('Masculino')
+        cy.contains('Masculino').click({ force: true })
+        cy.get('td[data-x="4"][data-y="0"]').click({ force: true })
+          .type('6º - Ano (Ensino Fundamental)')
+        cy.contains('6º - Ano (Ensino Fundamental)').click({ force: true })
+        // cy.get('td[data-x="5"][data-y="0"]')
+        cy.get('td[data-x="5"][data-y="0"]').click({ force: true })
+        cy.focused().type(' ')
+        cy.contains('Turma Automação 6 ano').click({ force: true })
+        cy.get('td[data-x="6"][data-y="0"]').click({ force: true })
+        cy.focused().type(' ')
+        cy.contains('Aprovado').click({ force: true })
+
+        //cy.get('td[data-x="1"][data-y="1"]').click({ force: true })
+        //  .type(nomeEstudante)
+        //cy.get('td[data-x="2"][data-y="1"]').click({ force: true })
+        //  .type(dataNascimento)
+        //cy.get('td[data-x="3"][data-y="1"]').click({ force: true })
+        //cy.focused().type('Masculino')
+        //cy.contains('Masculino').click({ force: true })//continuar verificando o motivo de não rodar
+        ////cy.get('td[data-x="4"][data-y="1"]').click({ force: true })
+        //  .type('6º - Ano (Ensino Fundamental)')
+        //cy.contains('6º - Ano (Ensino Fundamental)').click({ force: true })
+        //// cy.get('td[data-x="5"][data-y="0"]')
+        //cy.get('td[data-x="5"][data-y="1"]').click({ force: true })
+        //cy.focused().type(' ')
+        //cy.contains('Turma Automação 6 ano').click({ force: true })
+        //cy.get('td[data-x="6"][data-y="1"]').click({ force: true })
+        //cy.focused().type(' ')
+        //cy.contains('Aprovado').click({ force: true })
+
+        cy.get(':nth-child(2) > .MuiGrid-root > .MuiButtonBase-root')
+          .contains('SALVAR OS DADOS')
+          .click()
+        cy.get('.MuiSnackbar-root > .MuiPaper-root')
+          .contains('Histórico salvo com sucesso')
           .should('be.visible')
-        cy.get('td[data-x="1"][data-y="0"]').click({ force: true });
-        // Aguarda o site processar o clique
-        cy.wait(200);
-        // Pega o elemento que está focado e injeta o texto simulando a entrada do teclado
-        cy.focused().then(($el) => {
-          // Dispara o evento de inserção de texto que os frameworks modernos usam
-          const event = new InputEvent('input', { data: 'Seu Texto', bubbles: true, cancelable: true });
-          $el[0].value = 'Seu Texto'; // Tenta definir o valor diretamente se for um input oculto
-          $el[0].dispatchEvent(event);
-        });
-        // Envia o Enter globalmente para salvar
-        cy.get('body').type('Aluno Dois');
+          .wait(5000);
+        cy.get('img[alt="refresh"]').click({ force: true })
+        cy.get('span[class="MuiBox-root"]')
+          .contains('Cadastro concluído')
+          .should('be.visible')
 
-        cy.get('td[data-x="2"][data-y="0"]').click({ force: true });
-        // Aguarda o site processar o clique
-        cy.wait(200);// 1. Abre a célula de data
-        // Pega o elemento que está focado e injeta o texto simulando a entrada do teclado
-        cy.focused().then(($el) => { });
-        cy.get('body').type('18');
-        cy.contains('Atualizar').click();
-        //cy.get('td[data-x="3"][data-y="0"]').click({ force: true });
-        cy.get('td[data-x="3"][data-y="0"]').dblclick();
-        cy.get('.jexcel_dropdown', 'Masculino').click();
-
-
-        //cy.contains('jdropdown-description', 'Masculino').click
-        // cy.get('body').click({ force: true })
-        // //.select('Masculino')
-        // // Aguarda o site processar o clique
-        // cy.wait(200);
-        // cy.focused().type('Masculino{enter}').click({ force: true });
-        //cy.get('.selected > [data-x="3"]').click({ force: true });
-
-        //.contains('Masculino')
-        //.click();
-
-        // cy.wait(200).contains('Masculino').click();
 
 
 
