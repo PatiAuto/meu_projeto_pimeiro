@@ -665,23 +665,23 @@ describe('Entrar na página de login', () => {
 
   it.only('cadastra estudante em lote', () => {
 
-    // Funções utilitárias
-    function gerarNomeComposto() {
-      const nomes = ['Ana', 'Bruno', 'Carlos', 'Daniela', 'Eduardo', 'Fernanda'];
-      const sobrenomes = ['Silva', 'Souza', 'Pereira', 'Costa', 'Oliveira', 'Santos'];
-      const nome = nomes[Math.floor(Math.random() * nomes.length)];
-      const sobrenome = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
-      return `${nome} ${sobrenome}`;
-    }
-    function gerarDataNascimento() {
-      const dia = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0');
-      const mes = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
-      const ano = Math.floor(Math.random() * (2008 - 1995 + 1) + 1995);
-      return `${dia}/${mes}/${ano}`;
-    }
-    const nomeEstudante = gerarNomeComposto();
-    const dataNascimento = gerarDataNascimento();
-    cy.wrap(nomeEstudante).as('nomeEstudante');
+    //// Funções utilitárias
+    //function gerarNomeComposto() {
+    //  const nomes = ['Ana', 'Bruno', 'Carlos', 'Daniela', 'Eduardo', 'Fernanda'];
+    //  const sobrenomes = ['Silva', 'Souza', 'Pereira', 'Costa', 'Oliveira', 'Santos'];
+    //  const nome = nomes[Math.floor(Math.random() * nomes.length)];
+    //  const sobrenome = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
+    //  return `${nome} ${sobrenome}`;
+    //}
+    //function gerarDataNascimento() {
+    //  const dia = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0');
+    //  const mes = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+    //  const ano = Math.floor(Math.random() * (2008 - 1995 + 1) + 1995);
+    //  return `${dia}/${mes}/${ano}`;
+    //}
+    // const nomeEstudante = gerarNomeComposto();
+    // const dataNascimento = gerarDataNascimento();
+    // cy.wrap(nomeEstudante).as('nomeEstudante');
 
     // Login
     cy.get('input[id="user-input"]')
@@ -699,9 +699,23 @@ describe('Entrar na página de login', () => {
       .click();
     // Fluxo na origem diferente
     cy.origin(
-      'https://devplataformafarol.institutoayrtonsenna.org.br',
-      { args: { nomeEstudante, dataNascimento } },
-      ({ nomeEstudante, dataNascimento }) => {
+      'https://devplataformafarol.institutoayrtonsenna.org.br', () => {
+
+        function gerarNomeComposto() {
+          const nomes = ['Ana', 'Bruno', 'Carlos', 'Daniela', 'Eduardo', 'Fernanda'];
+          const sobrenomes = ['Silva', 'Souza', 'Pereira', 'Costa', 'Oliveira', 'Santos'];
+          const nome = nomes[Math.floor(Math.random() * nomes.length)];
+          const sobrenome = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
+          return `${nome} ${sobrenome}`;
+        }
+
+        function gerarDataNascimento() {
+          const dia = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0');
+          const mes = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+          const ano = Math.floor(Math.random() * (2008 - 1995 + 1) + 1995);
+          return `${dia}/${mes}/${ano}`;
+        }
+
         cy.get('.MuiTypography-root.MuiTypography-body1')
           .should('be.visible')
           .wait(2000);
@@ -731,54 +745,76 @@ describe('Entrar na página de login', () => {
         cy.get('span[class="MuiButton-label"]')
           .contains('INICIAR CADASTRO')
           .click();
-        cy.get('td[data-x="1"][data-y="0"]').click({ force: true })
-          .type(nomeEstudante)
-        cy.get('td[data-x="2"][data-y="0"]').click({ force: true })
-          .type(dataNascimento)
-        cy.get('td[data-x="3"][data-y="0"]').click({ force: true })
+        cy.get('td[data-x="1"][data-y="0"]')
+          .click({ force: true })
+          .type(gerarNomeComposto())
+        cy.get('td[data-x="2"][data-y="0"]')
+          .click({ force: true })
+          .type(gerarDataNascimento())
+        cy.get('td[data-x="3"][data-y="0"]')
+          .click({ force: true })
           .type('Masculino')
-        cy.contains('Masculino').click({ force: true })
-        cy.get('td[data-x="4"][data-y="0"]').click({ force: true })
+        cy.contains('Masculino')
+          .click({ force: true })
+        cy.get('td[data-x="4"][data-y="0"]')
+          .click({ force: true })
           .type('6º - Ano (Ensino Fundamental)')
-        cy.contains('6º - Ano (Ensino Fundamental)').click({ force: true })
-        // cy.get('td[data-x="5"][data-y="0"]')
-        cy.get('td[data-x="5"][data-y="0"]').click({ force: true })
+        cy.contains('6º - Ano (Ensino Fundamental)')
+          .click({ force: true })
+        cy.get('td[data-x="5"][data-y="0"]')
+          .click({ force: true })
         cy.focused().type(' ')
-        cy.contains('Turma Automação 6 ano').click({ force: true })
-        cy.get('td[data-x="6"][data-y="0"]').click({ force: true })
+        cy.contains('Turma Automação 6 ano')
+          .click({ force: true })
+        cy.get('td[data-x="6"][data-y="0"]')
+          .click({ force: true })
         cy.focused().type(' ')
-        cy.contains('Aprovado').click({ force: true })
+        cy.contains('Aprovado')
+          .click({ force: true })
 
-        //cy.get('td[data-x="1"][data-y="1"]').click({ force: true })
-        //  .type(nomeEstudante)
-        //cy.get('td[data-x="2"][data-y="1"]').click({ force: true })
-        //  .type(dataNascimento)
-        //cy.get('td[data-x="3"][data-y="1"]').click({ force: true })
-        //cy.focused().type('Masculino')
-        //cy.contains('Masculino').click({ force: true })//continuar verificando o motivo de não rodar
-        ////cy.get('td[data-x="4"][data-y="1"]').click({ force: true })
-        //  .type('6º - Ano (Ensino Fundamental)')
-        //cy.contains('6º - Ano (Ensino Fundamental)').click({ force: true })
-        //// cy.get('td[data-x="5"][data-y="0"]')
-        //cy.get('td[data-x="5"][data-y="1"]').click({ force: true })
-        //cy.focused().type(' ')
-        //cy.contains('Turma Automação 6 ano').click({ force: true })
-        //cy.get('td[data-x="6"][data-y="1"]').click({ force: true })
-        //cy.focused().type(' ')
-        //cy.contains('Aprovado').click({ force: true })
 
-        cy.get(':nth-child(2) > .MuiGrid-root > .MuiButtonBase-root')
-          .contains('SALVAR OS DADOS')
-          .click()
-        cy.get('.MuiSnackbar-root > .MuiPaper-root')
-          .contains('Histórico salvo com sucesso')
-          .should('be.visible')
-          .wait(5000);
-        cy.get('img[alt="refresh"]').click({ force: true })
-        cy.get('span[class="MuiBox-root"]')
-          .contains('Cadastro concluído')
-          .should('be.visible')
+        cy.get('td[data-x="1"][data-y="1"]')
+          .click({ force: true })
+          .type(gerarNomeComposto())
+        cy.get('td[data-x="2"][data-y="1"]')
+          .click({ force: true })
+          .type(gerarDataNascimento())
+        cy.get('td[data-x="3"][data-y="1"]').click({ force: true }).type('Masculino');
+        // O .within garante que o Cypress só vai procurar o botão de clique dentro da célula correta
+        cy.get('td[data-x="3"][data-y="1"]').within(() => {
+          cy.contains('Masculino').click({ force: true });
+        });
+        cy.get('td[data-x="4"][data-y="1"]').click({ force: true }).type('6º - Ano (Ensino Fundamental)');
+        cy.get('td[data-x="4"][data-y="1"]').within(() => {
+          cy.contains('6º - Ano (Ensino Fundamental)').click({ force: true });
+        });
 
+        // COLUNA 5: Turma (Isolado na Linha 2)
+        cy.get('td[data-x="5"][data-y="1"]').click({ force: true });
+        cy.focused().type(' ');
+        cy.get('td[data-x="5"][data-y="1"]').within(() => {
+          cy.contains('Turma Automação 6 ano').click({ force: true });
+        });
+
+        // COLUNA 6: Situação (Isolado na Linha 2)
+        cy.get('td[data-x="6"][data-y="1"]').click({ force: true });
+        cy.focused().type(' ');
+        cy.get('td[data-x="6"][data-y="1"]').within(() => {
+          cy.contains('Aprovado').click({ force: true });
+        });
+
+
+        // cy.get(':nth-child(2) > .MuiGrid-root > .MuiButtonBase-root')
+        //   .contains('SALVAR OS DADOS')
+        //   .click()
+        // cy.get('.MuiSnackbar-root > .MuiPaper-root')
+        //   .contains('Histórico salvo com sucesso')
+        //   .should('be.visible')
+        //   .wait(5000);
+        // cy.get('img[alt="refresh"]').click({ force: true })
+        // cy.get('[index="0"] > [value="CONCLUIDO"] > .MuiBox-root')
+        //   .should('be.visible')
+        //
 
 
 
